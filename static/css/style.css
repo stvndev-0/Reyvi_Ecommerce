@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    --main-color: #0089e4;
+    --second-color: #0089e494;
+}
+
+body{
+    background-color: var(--main-color) !important;
+    display: grid;
+    min-height: 100vh;
+    grid-template-rows: auto 1fr auto;
+}
+
+.nav{
+    color: white;
+}
+
+.navbar-nav a{
+    color: white;
+}
+
+.navbar-nav .nav-item ul{
+    background-color: var(--main-color);
+}
+
+.nav-item ul li a:hover{
+    background-color: var(--second-color);
+    color: rgba(255, 255, 255, 0.733);
+}
+
+.footer{
+    color: #f2f2f2;
+}
