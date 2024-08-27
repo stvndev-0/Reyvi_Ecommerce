@@ -4,7 +4,7 @@ from store.models import Product
 from users.models import Profile
 
 # Create your models here.
-class Orden(models.Model):
+class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     client = models.ForeignKey(Profile, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
