@@ -26,7 +26,7 @@
                         </a>
                         <ul class="dropdown-menu">
                         {% for category in categories %}
-                            <li><a class="dropdown-item" href="{% url 'category' category.pk %}">{{category.name}}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' slug=category.slug %}">{{category.name}}</a></li>
                         {% endfor %}
                         </ul>
                     </li>
@@ -35,13 +35,18 @@
                     <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
                     <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cart-fill" style="color: white;"></i></a></li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="{% url 'my_account' %}">My account</a>
-                        <ul>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-fill"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-items">
+                                <a class="nav-link" href="{% url 'my_account' %}">My account</a>
+                            </li>
                             <li class="nav-item">
                                 <form method="post" action="{% url 'logout' %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="nav-link">Logout</button>
+                                    <button type="submit" class="nav-link text-white">Logout</button>
                                 </form>
                             </li>
                         </ul>
