@@ -1,4 +1,5 @@
 .venv
 .env
 apps.txt
-notas.html
+notas.py
+db.sqlite3
