@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<a href="">{{product.category.name}}</a>
+<div class="d-flex flex-row">
+    <div>
+        <img src="{{product.image.url}}" alt="{{product.image.name}}" style="width: 305px;">
+    </div>
+    <div>
+        <h5>{{product.name}}</h5>
+        {% if product.is_sale %}
+        {{product.price}}
+        {{product.discounted_price}} {{product.discount_percentage}}
+        {% else %}
+        {{product.price}}
+        {% endif %}
+    </div>
+    <p>{{product.description}}</p>
+</div>
+
+{% endblock %}

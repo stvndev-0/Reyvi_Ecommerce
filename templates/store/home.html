@@ -21,8 +21,8 @@
 <div class="row justify-content-center align-items-center text-center mt-5">
     {% for category in categories %}
     <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <a href="">
-            <div class="card text-bg-dark">
+        <a class="category-card" href="{% url 'category' category.pk %}">
+            <div class="card" style="overflow: hidden;">
                 <img src="{{ category.image.url }}" class="card-img card-category-img" alt="{{ category.image.name }}">
                 <div class="card-img-overlay align-content-center">
                     <h5 class="card-title">{{ category.name }}</h5>
@@ -34,14 +34,15 @@
 </div>
 
 <div class="text-center mb-4">
-  <h1>Sales</h1>
+  <h1 class="text-white">Sales</h1>
 </div>
 <!-- Sales -->
 
 <section class="">
   <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-      {% for product in products_sales %}        
+      {% for product in products_sales %}
+      {% if product.is_sale %}                
       <div class="col mb-5">
         <div class="card h-100">
           <img class="card-img-top" src="{{product.image.url}}" alt="">
@@ -64,10 +65,13 @@
             </div>
           <!-- Product actions-->
           <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+            <div class="text-center">
+              <a class="btn mt-auto" href="{% url 'product-detail' product.pk %}">See Product</a>
+            </div>
           </div>
         </div>
       </div>
+      {% endif %}
       {% endfor %}
     </div>
   </div>

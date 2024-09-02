@@ -3,7 +3,7 @@
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     --main-color: #0089e4;
-    --second-color: #0089e494;
+    --second-color: #fff;
 }
 
 body{
@@ -13,11 +13,9 @@ body{
     grid-template-rows: auto 1fr auto;
 }
 
-.header-nav{
-    position: fixed !important;
-    background-color: var(--main-color);
-    width: 100%;
-    z-index: 1000;
+nav, .offcanvas{
+    background-color: var(--main-color) !important;
+    color: white !important;
 }
 
 .navbar-toggler{
@@ -32,25 +30,53 @@ body{
     color: white;
 }
 
+.navbar-nav a:hover{
+    color: white;
+    text-decoration-line: underline;
+    text-underline-offset: 3px;
+}
+
 .navbar-nav .nav-item ul{
     background-color: var(--main-color);
 }
 
 .nav-item ul li a:hover{
-    background-color: var(--second-color);
-    color: rgba(255, 255, 255, 0.733);
+    color: white;
+    background-color: var(--main-color);
+    text-decoration-line: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: white;
+    text-indent: 5px;
 }
 
-.content{
-    margin-top: 4rem;
-    margin-bottom: 4rem;
+/* Seccion Category home */
+.category-card h5{
+    color: white;
 }
 
-.card-category-img {
+.card-category-img{
     filter: brightness(70%);
     height: 165px;
     width: 100%;
     object-fit: cover;
+    
+}
+
+.btn{
+    border-color: black !important;
+}
+
+.btn:hover{
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: white !important;
+}
+
+
+/* Login and Register */
+
+.wrapper{
+    
 }
 
 .footer{
