@@ -2,6 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+
+
+# Faltan validaciones
 class LoginForm(AuthenticationForm):
 	# Ya que estoy extendiendo 'AuthenticationForm' y agregando placeholders a los campos del formulario, tengo
 	# que sobrescribir el metodo '__init__'.
@@ -17,8 +20,9 @@ class LoginForm(AuthenticationForm):
             'placeholder': 'Password'
         })
 
+# Faltan validaciones
 class SignUpForm(UserCreationForm):
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control'}))
+	email = forms.EmailField(label="", required=True, widget=forms.TextInput(attrs={'class':'form-control'}))
 
 	class Meta:
 		model = User
@@ -41,3 +45,9 @@ class SignUpForm(UserCreationForm):
 		self.fields['password2'].widget.attrs['placeholder'] = ''
 		self.fields['password2'].label = ''
 		self.fields['password2'].help_text = '<span class="form-text text-muted-white"><small>Enter the same password as before, for verification.</small></span>'
+
+	def clean_email(self):
+		email = self.cleaned_data.get('email')
+		if User.objects.filter(email=email).exists():
+			raise forms.ValidationError('El email ya esta registrado, por favor introduzca otro.')
+		return email
