@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Cart Summary</h1>
+
+{% if cart_products %}
+    
+    {% for product in cart_products %}
+    <img src="{{product.image.url}}" alt="" width="100">
+
+    {{product.name}}
+    {{product.price}}
+
+    {% endfor %}
+    
+{% else %}
+<h2>No items in cart</h2>
+{% endif %}
+    
+{% endblock %}
