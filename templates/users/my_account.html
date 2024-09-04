@@ -5,4 +5,15 @@
 <h4>info user</h4>
 {{user.username}}
 
+<h4>Direccion para el pedido</h4>
+Country: {{user.profile.country}} <br>
+First name: {{user.first_name}} <br>
+Last name: {{user.last_name}} <br>
+Phone: {{user.profile.phone}}
+Address: {{user.profile.address1}} <br>
+State/Province: {{user.profile.state}} <br>
+City: {{user.profile.city}} <br>
+Zipcode: {{user.profile.zipcode}}
+    
+
 {% endblock %}

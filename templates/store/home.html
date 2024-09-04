@@ -21,7 +21,7 @@
 <div class="row justify-content-center align-items-center text-center mt-5">
     {% for category in categories %}
     <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <a class="category-card" href="{% url 'category' category.pk %}">
+        <a class="category-card" href="{% url 'category' category.slug %}">
             <div class="card" style="overflow: hidden;">
                 <img src="{{ category.image.url }}" class="card-img card-category-img" alt="{{ category.image.name }}">
                 <div class="card-img-overlay align-content-center">

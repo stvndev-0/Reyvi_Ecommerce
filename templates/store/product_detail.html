@@ -10,13 +10,44 @@
     <div>
         <h5>{{product.name}}</h5>
         {% if product.is_sale %}
-        {{product.price}}
-        {{product.discounted_price}} {{product.discount_percentage}}
+            {{product.price}}
+            {{product.discounted_price}} {{product.discount_percentage}}
         {% else %}
-        {{product.price}}
+            {{product.price}}
         {% endif %}
+        <br>
+        <button value="{{product.id}}" class="btn" id="add-cart">Add to Cart</button>
     </div>
     <p>{{product.description}}</p>
 </div>
-
+<script>
+    // Comprobamos si el button con el ID '#add-cart' esta siendo presionado,
+    // si esta siendo presionado se ejecutara la funcion que sigue.
+    // e.preventDefault(); evita que el boton realice una accion por defecto,
+    // como enviar un formulario o recargar la pagina.
+    $(document).on('click', '#add-cart', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_add' %}",
+            // El contenido de 'data' se envian al servidor en la solicitud.
+            // Se envia 'product_id' el cual obtiene el valor del button '#add-cart'
+            // Se envia un token CSRF generado por django
+            // Se envia una accion con el valor 'post', el cual se ocupara en el backend
+            data: {
+                product_id: $('#add-cart').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            // si la solicitud se realiza con exito se ejecuta esta funcion
+            success: function(json){
+                document.getElementById('cart_quantity').textContent = json.qty;
+            },
+            // si la solicitud falla se ejecuta eta funcion
+            error: function(xhr, status, err){
+                console.error("Error en la solicitud AJAX:", status, error)
+            }
+        });
+    })
+</script>
 {% endblock %}
