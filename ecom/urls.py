@@ -10,6 +10,7 @@ urlpatterns = [
     path('my_account/', include('users.urls')),
     path('login/', LoginView.as_view(), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
+    path('cart/', include('cart.urls')),
 ]
 
 if settings.DEBUG:
