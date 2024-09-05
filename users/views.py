@@ -1,3 +1,4 @@
+import json
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.forms import LoginForm, SignUpForm
@@ -7,6 +8,9 @@ from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
 from django.conf import settings
+from .models import Profile
+from cart.cart import Cart
+from store.models import Product
 
 class LoginView(FormView):
     template_name = 'users/login.html'
@@ -18,6 +22,26 @@ class LoginView(FormView):
         response = super().form_valid(form)
         user = form.get_user()
         login(self.request, user)
+
+        # 
+        current_user = Profile.objects.get(user__id=self.request.user.id)
+        saved_cart = current_user.old_cart
+        if saved_cart:
+            convert_cart = json.loads(saved_cart)
+            cart = Cart(self.request)
+
+            # Recuperamos los productos con sus IDs
+            product_ids = list(convert_cart.keys())
+            products = Product.objects.filter(id__in=product_ids)
+
+            # Diccionario de productos
+            product_dict = {str(product.id): product for product in products}
+            
+            for key, value in convert_cart.items():
+                product = product_dict.get(key)
+                if product:
+                    cart.add(product=product, quantity=value)
+
         return response
 
 # Hacer que se el usuario acceda a su uenta una vez registrado, falta enviar un correo electronico
