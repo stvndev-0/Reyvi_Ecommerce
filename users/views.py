@@ -1,9 +1,9 @@
 import json
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.forms import LoginForm, SignUpForm
+from users.forms import LoginForm, SignUpForm, UpdateUserForm, UpdateInfoForm
 from django.contrib.auth.models import User
-from django.views.generic import ListView
+from django.views.generic import ListView, UpdateView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
@@ -15,7 +15,9 @@ from store.models import Product
 class LoginView(FormView):
     template_name = 'users/login.html'
     form_class = LoginForm
-    success_url = reverse_lazy('home')  # Redirigir después de un login exitoso
+
+    def get_success_url(self):
+        return reverse_lazy('my_account')
 
     def form_valid(self, form):
         # Autenticación del usuario
@@ -51,15 +53,15 @@ class RegisterView(CreateView):
     form_class = SignUpForm
     template_name = 'users/register.html'
 
+    def get_success_url(self):
+        return reverse_lazy('my_account')
+    
     def form_valid(self, form):
         response = super().form_valid(form)
         user = form.save()
         login(self.request, user)
         self.send_welcome_mail(user)
         return response
-    
-    def get_success_url(self):
-        return reverse_lazy('my_account')
     
     def send_welcome_mail(self, user):
         send_mail(
@@ -73,3 +75,25 @@ class RegisterView(CreateView):
 class AccountListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'users/my_account.html'
+
+class AccountUserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UpdateUserForm
+    template_name = 'users/crud/update_account.html'
+
+    def get_success_url(self):
+        return reverse_lazy('my_account')
+    
+    def get_object(self):
+        return User.objects.get(id=self.request.user.id)
+    
+class AccountInfoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = UpdateInfoForm
+    template_name = 'users/crud/update_info.html'
+
+    def get_success_url(self):
+        return reverse_lazy('my_account')
+    
+    def get_object(self):
+        return Profile.objects.get(user_id=self.request.user.id)
