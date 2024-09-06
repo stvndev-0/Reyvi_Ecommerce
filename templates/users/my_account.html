@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
 <h4>info user</h4>
-{{user.username}}
+username: {{user.username}} <br>
+First name: {{user.first_name}} <br>
+Last name: {{user.last_name}} <br>
+Email: {{user.email}} <br>
+<a href="{% url 'user_update' %}" class="btn">Update user</a>
 
 <h4>Direccion para el pedido</h4>
 Country: {{user.profile.country}} <br>
-First name: {{user.first_name}} <br>
-Last name: {{user.last_name}} <br>
-Phone: {{user.profile.phone}}
+Phone: {{user.profile.phone}} <br>
 Address: {{user.profile.address1}} <br>
 State/Province: {{user.profile.state}} <br>
 City: {{user.profile.city}} <br>
-Zipcode: {{user.profile.zipcode}}
-    
+Zipcode: {{user.profile.zipcode}} <br>
+<a href="{% url 'info_update' %}" class="btn">Update info</a>
 
+<h4>Mis pedidos</h4>
+<a href="">Ver mas</a>
 {% endblock %}

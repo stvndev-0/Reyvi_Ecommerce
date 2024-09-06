@@ -16,10 +16,14 @@
             {{product.price}}
         {% endif %}
         <br>
-        <button value="{{product.id}}" class="btn" id="add-cart">Add to Cart</button>
+        <div>
+            <input type="number" value="1"  id="qty-cart" min="1">
+            <button value="{{product.id}}" class="btn" id="add-cart">Add to Cart</button>
+        </div>
     </div>
     <p>{{product.description}}</p>
 </div>
+
 <script>
     // Comprobamos si el button con el ID '#add-cart' esta siendo presionado,
     // si esta siendo presionado se ejecutara la funcion que sigue.
@@ -36,6 +40,7 @@
             // Se envia una accion con el valor 'post', el cual se ocupara en el backend
             data: {
                 product_id: $('#add-cart').val(),
+                product_qty: $('#qty-cart').val(),
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 action: 'post'
             },
@@ -43,9 +48,9 @@
             success: function(json){
                 document.getElementById('cart_quantity').textContent = json.qty;
             },
-            // si la solicitud falla se ejecuta eta funcion
+            // si la solicitud falla se ejecuta esta funcion
             error: function(xhr, status, err){
-                console.error("Error en la solicitud AJAX:", status, error)
+                console.error("Error en la solicitud AJAX:", status, err)
             }
         });
     })

@@ -5,17 +5,107 @@
 <h1>Cart Summary</h1>
 
 {% if cart_products %}
-    
-    {% for product in cart_products %}
-    <img src="{{product.image.url}}" alt="" width="100">
-
-    {{product.name}}
-    {{product.price}}
-
-    {% endfor %}
-    
+    <table class="table table-dark table-sm">
+        <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+        </thead>
+        {% for product in cart_products %}
+        <tbody>
+            <tr>
+                <th scope="row"><button data-index="{{product.id}}" class="btn btn-outline-danger delete-product">x</a></th>
+                <td><img src="{{product.image.url}}" alt="" width="50"></td>
+                <td>{{product.name}}</td>
+                <td>${% if product.is_sale %}{{product.discounted_price}}{% else %}{{product.price}}{% endif %}</td>
+                <td>
+                    {% for key, value in quantities.items %}
+                        {% if key == product.id|slugify %}
+                    <input type="number" value="{{value}}" id="qty-cart-{{product.id}}" min="1">
+                        {% endif %}
+                    {% endfor %}
+                </td>s
+                <td>
+                    <button data-index="{{product.id}}" class="btn update-cart">Update Cart</button>
+                </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+    <h2>Total Cart: ${{ totals }}</h2>
+    <a href="" class="btn">Pay Cart</a>
 {% else %}
 <h2>No items in cart</h2>
 {% endif %}
     
+<script>
+    // Comprobamos si el button con la clase '.update-cart' esta siendo presionado,
+    // si esta siendo presionado se ejecutara la funcion que sigue.
+    // e.preventDefault(); evita que el boton realice una accion por defecto,
+    // como enviar un formulario o recargar la pagina.
+    $(document).on('click', '.update-cart', function(e){
+        e.preventDefault();
+        // 
+        var productid = $(this).data('index');
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_update' %}",
+            // El contenido de 'data' se envian al servidor en la solicitud.
+            // Se envia 'product_id' el cual obtiene el 
+            // 
+            // Se envia un token CSRF generado por django
+            // Se envia una accion con el valor 'post', el cual se ocupara en el backend
+            data: {
+                product_id: $(this).data('index'),
+                product_qty: $('#qty-cart-' + productid).val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            // si la solicitud se realiza con exito se ejecuta esta funcion
+            success: function(json){
+                location.reload()
+            },
+            // si la solicitud falla se ejecuta esta funcion
+            error: function(xhr, status, err){
+                console.error("Error en la solicitud AJAX:", status, err)
+            }
+        });
+    })
+
+    // Comprobamos si el button con la clase '.delete-product' esta siendo presionado,
+    // si esta siendo presionado se ejecutara la funcion que sigue.
+    // e.preventDefault(); evita que el boton realice una accion por defecto,
+    // como enviar un formulario o recargar la pagina.
+    $(document).on('click', '.delete-product', function(e){
+        e.preventDefault();
+        // 
+        var productid = $(this).data('index');
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_delete' %}",
+            // El contenido de 'data' se envian al servidor en la solicitud.
+            // Se envia 'product_id' el cual obtiene el 
+            // Se envia un token CSRF generado por django
+            // Se envia una accion con el valor 'post', el cual se ocupara en el backend
+            data: {
+                product_id: $(this).data('index'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            // si la solicitud se realiza con exito se ejecuta esta funcion
+            success: function(json){
+                location.reload()
+            },
+            // si la solicitud falla se ejecuta esta funcion
+            error: function(xhr, status, err){
+                console.error("Error en la solicitud AJAX:", status, err)
+            }
+        });
+    })
+</script>
 {% endblock %}
