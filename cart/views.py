@@ -13,12 +13,12 @@ class CartSummaryListView(TemplateView):
         return reverse_lazy('cart_summary')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        response = super().get_context_data(**kwargs)
         cart = Cart(self.request)
-        context['cart_products'] = cart.get_products()
-        context['quantities'] = cart.get_quants()
-        context['totals'] = cart.total()
-        return context
+        response['cart_products'] = cart.get_products()
+        response['quantities'] = cart.get_quants()
+        response['totals'] = cart.total()
+        return response
 
 class CartAddView(View):
 
