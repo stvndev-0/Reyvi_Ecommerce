@@ -1,14 +1,14 @@
 import json
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.forms import LoginForm, SignUpForm, UpdateUserForm, UpdateInfoForm
+from users.forms import LoginForm, SignUpForm, UpdateUserForm, ShippingAddressForm
 from django.contrib.auth.models import User
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, View
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import Profile
+from .models import Profile, ShippingAddress
 from cart.cart import Cart
 from store.models import Product
 
@@ -76,24 +76,41 @@ class AccountListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'users/my_account.html'
 
+class ManageAccountView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'users/manage_account.html'
+
 class AccountUserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UpdateUserForm
-    template_name = 'users/crud/update_account.html'
+    template_name = 'users/crud_account/account_update.html'
 
     def get_success_url(self):
         return reverse_lazy('my_account')
     
     def get_object(self):
         return User.objects.get(id=self.request.user.id)
-    
-class AccountInfoUpdateView(LoginRequiredMixin, UpdateView):
-    model = Profile
-    form_class = UpdateInfoForm
-    template_name = 'users/crud/update_info.html'
+
+class ShippingAddressView(LoginRequiredMixin, ListView):
+    model = ShippingAddress
+    template_name = 'users/address_book.html'
+
+class ShippingAddressCreateView(LoginRequiredMixin, CreateView):
+    model = ShippingAddress
+    form_class = ShippingAddressForm
+    template_name = "users/crud_address/shippingAddress_create.html"
 
     def get_success_url(self):
         return reverse_lazy('my_account')
     
-    def get_object(self):
-        return Profile.objects.get(user_id=self.request.user.id)
+    def form_valid(self, form):
+        form.instance.user = self.request.user.profile
+        return super().form_valid(form)
+
+class ShippingAddressUpdateView(LoginRequiredMixin, UpdateView):
+    model = ShippingAddress
+    form_class = ShippingAddressForm
+    template_name = "users/crud_address/shippingAddress_update.html"
+
+    def get_success_url(self):
+        return reverse_lazy('my_account')
