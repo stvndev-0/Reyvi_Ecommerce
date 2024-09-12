@@ -1,68 +1,64 @@
 {% load static %}
-<nav class="navbar navbar-expand-md sticky-top" data-bs-theme="dark">
-    <div class="container">
-        <a class="navbar-brand d-md-none" href="{% url 'home' %}">
-            <img src="{% static 'images/logo.jpg' %}" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas" aria-label="Toggle navigation">
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas" aria-label="Toggle navigation">
             <i class="bi bi-list" style="color: white;"></i>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasLabel">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav flex-grow-1 justify-content-between">
+        </button> -->
+                    
+                    
+
+
+<nav class="navbar navbar-expand-md sticky-top">
+    <div class="container">
+        <div class="col-2 mb-2 mb-md-0">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.jpg' %}" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
+            </a>
+        </div>
+        <ul class="nav col-6 mb-2 justify-content-center mb-md-0">
+            <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+            <li class="nav-item dropdown ms-2">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Products
+                </a>
+                <ul class="dropdown-menu">
+                {% for category in categories %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">
-                            <img src="{% static 'images/logo.jpg' %}" alt="Logo" width="24" height="24" class="d-inline-block align-text-top"><use xlink:href="#aperture"></use>
-                        </a>
+                        <a class="dropdown-item" href="{% url 'category' slug=category.slug %}">{{category.name}}</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Products
-                        </a>
-                        <ul class="dropdown-menu">
-                        {% for category in categories %}
-                            <li><a class="dropdown-item" href="{% url 'category' slug=category.slug %}">{{category.name}}</a></li>
-                        {% endfor %}
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
-                    <li class="nav-item">
-                        <form class="d-flex">
-                            <a href="{% url 'cart_summary' %}" class="btn btn-outline-dark">
-                                <i class="bi bi-cart-fill" style="color: white;"></i>
-                                <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span>
-                            </a>
-                        </form>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-fill"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li class="nav-items">
-                                <a class="nav-link" href="{% url 'my_account' %}">My account</a>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" action="{% url 'logout' %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="nav-link text-white">Logout</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item"> <a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{% url 'register' %}">Register</a></li>
-                    {% endif %}
+                {% endfor %}
                 </ul>
+            </li>
+            <li><a href="#" class="nav-link ms-2">Pricing</a></li>
+            <li><a href="#" class="nav-link ms-2">FAQs</a></li>
+            <li><a href="{% url 'about' %}" class="nav-link ms-2">About</a></li>
+        </ul>
+
+        <div class="col-2">
+            <div class="d-flex align-items-center">
+                <a href="{% url 'cart_summary' %}" class="position-relative">
+                    <i class="bi bi-cart fs-5" style="color: white;"></i>
+                    <span class="rounded-circle bg-danger text-center text-white position-absolute top-0 translate-middle-x" id="cart_quantity">{{ cart|length }}</span>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="btn-group ms-3">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                        <i class="bi bi-person-fill fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                        <li class="nav-items">
+                            <a class="dropdown-item" href="{% url 'my_account' %}">My account</a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="btn btn-light ms-4" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-light ms-3" href="{% url 'register' %}">Register</a>
+                {% endif %}
             </div>
         </div>
     </div>

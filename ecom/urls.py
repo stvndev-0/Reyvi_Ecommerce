@@ -11,6 +11,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
     path('cart/', include('cart.urls')),
+    path('payment/', include('payment.urls'))
 ]
 
 if settings.DEBUG:

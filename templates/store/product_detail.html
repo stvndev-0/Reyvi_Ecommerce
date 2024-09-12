@@ -2,12 +2,19 @@
 {% load static %}
 {% block content %}
 
-<a href="">{{product.category.name}}</a>
+<nav class="breadcrumb-nav" aria-label="breadcrumb">
+    <ol class="breadcrumb align-items-center">
+        <li class="me-2"><button onclick="volver()" class="btn-back"><i class="bi bi-arrow-left-short"></i></button></li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="">{{product.category.name}}</a></li>
+    </ol>
+</nav>
+
 <div class="d-flex flex-row">
-    <div>
-        <img src="{{product.image.url}}" alt="{{product.image.name}}" style="width: 305px;">
+    <div class="col-6">
+        <img src="{{product.image.url}}" alt="{{product.image.name}}" style="width: 400px;">
     </div>
-    <div>
+    <div class="col-6">
         <h5>{{product.name}}</h5>
         {% if product.is_sale %}
             {{product.price}}
@@ -21,7 +28,7 @@
             <button value="{{product.id}}" class="btn" id="add-cart">Add to Cart</button>
         </div>
     </div>
-    <p>{{product.description}}</p>
+    <!-- <p>{{product.description}}</p> -->
 </div>
 
 <script>

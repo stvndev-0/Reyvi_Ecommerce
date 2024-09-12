@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
-
+<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
 <form method="post">
     {% csrf_token %}
     {{form.as_p}}

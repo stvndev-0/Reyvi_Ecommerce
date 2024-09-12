@@ -2,83 +2,142 @@
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
+    list-style: none;
     --main-color: #0089e4;
     --second-color: #fff;
 }
 
+h3{
+    color: var(--main-color) !important; 
+    font-weight: 700 !important;
+}
+
 body{
-    background-color: var(--main-color) !important;
+    background-color: var(--second-color) !important;
     display: grid;
     min-height: 100vh;
     grid-template-rows: auto 1fr auto;
 }
 
-nav, .offcanvas{
-    background-color: var(--main-color) !important;
-    color: white !important;
-}
-
-.navbar-toggler{
-    border: none !important;
-}
-
-.navbar-toggler:focus{
-    box-shadow: none !important;
-}
-
-.navbar-nav a{
-    color: white;
-}
-
-.navbar-nav a:hover{
-    color: white;
-    text-decoration-line: underline;
-    text-underline-offset: 3px;
-}
-
-.navbar-nav .nav-item ul{
+/* Header */
+nav{
     background-color: var(--main-color);
+    color: var(--second-color);
 }
 
-.nav-item ul li a:hover{
-    color: white;
-    background-color: var(--main-color);
-    text-decoration-line: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: white;
-    text-indent: 5px;
+.nav-link{
+    color: var(--second-color) !important;
 }
 
-/* Seccion Category home */
-.category-card h5{
-    color: white;
+.nav-link:focus{
+    color: var(--second-color) !important;
 }
 
-.card-category-img{
-    filter: brightness(70%);
-    height: 165px;
+.nav-link:hover{
+    color: rgb(229, 231, 235) !important;
+}
+
+#cart_quantity{
+    font-size: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+}
+
+.btn-light{
+    color: var(--main-color) !important;
+}
+
+/* Section Home */
+.section-home h1{
+    color: var(--main-color);
+    font-weight: 700;
+    font-size: 2.25rem;
+}
+
+.section-home p{
+    font-size: 1.25rem;
+}
+
+.search{
+    outline: none;
+    border: 2px solid var(--main-color);
     width: 100%;
+}
+
+.search:focus{
+    box-shadow: 0 0 0 2px grey;
+    border-color: var(--main-color);
+}
+
+.search:focus-visible{
+    outline: none;
+    border-color: transparent;
+}
+
+/* Section Category */
+.section-category img{
+    filter: brightness(70%);
+    height: 240px;
+    width: 240px;
     object-fit: cover;
-    
 }
 
-.btn{
-    border-color: black !important;
+.section-category a:hover img{
+    filter: brightness(50%);
+    color: white;
 }
 
-.btn:hover{
-    background-color: var(--main-color) !important;
-    border-color: var(--main-color) !important;
-    color: white !important;
+/* Section Offers */
+.badge{
+    font-size: 0.875rem !important;
+    border-radius: 0px !important;
+    line-height: normal !important;
 }
 
+.card-body h5{
+    color: var(--main-color);
+    font-weight: 600;
+}
+
+.btn-color-primary{
+    background-color: var(--main-color);
+    color: var(--second-color);
+    text-decoration: none;
+    width: 100%;
+    height: 2.5rem;
+}
+
+.btn-color-primary:hover{
+    background-color: rgb(0 137 228 / 0.9);
+}
+
+/* Section Community */
+.section-community{
+    background: var(--main-color);
+}
+
+/* Category Page */
+.breadcrumb-nav{
+    background: none;
+}
+
+.breadcrumb-item a{
+    color: var(--main-color) !important;
+}
+
+.btn-back{
+    background: transparent;
+    border: none;
+    font-size: 25px;
+}
+
+.btn-back i{
+    color: var(--main-color);
+}
 
 /* Login and Register */
 
-.wrapper{
-    
-}
 
 .footer{
-    color: #f2f2f2;
+    background-color: rgb(243, 244, 246);
 }

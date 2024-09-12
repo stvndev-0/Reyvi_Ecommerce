@@ -1,22 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
 
-<h4>info user</h4>
-username: {{user.username}} <br>
-First name: {{user.first_name}} <br>
-Last name: {{user.last_name}} <br>
-Email: {{user.email}} <br>
-<a href="{% url 'user_update' %}" class="btn">Update user</a>
 
-<h4>Direccion para el pedido</h4>
-Country: {{user.profile.country}} <br>
-Phone: {{user.profile.phone}} <br>
-Address: {{user.profile.address1}} <br>
-State/Province: {{user.profile.state}} <br>
-City: {{user.profile.city}} <br>
-Zipcode: {{user.profile.zipcode}} <br>
-<a href="{% url 'info_update' %}" class="btn">Update info</a>
+{{user.first_name}}
 
-<h4>Mis pedidos</h4>
-<a href="">Ver mas</a>
+<a href="{% url 'manage_account' %}">Manage my account</a>
+<a href="{% url 'address_book' %}">My Address book</a>
+<div class="my-2">
+    <div class="card">
+        <h4>Mis pedidos</h4>
+        <a href="">Ver mas</a>
+    </div>
+</div>
+
 {% endblock %}

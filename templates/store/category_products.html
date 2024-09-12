@@ -2,49 +2,13 @@
 {% load static %}
 {% block content %}
 
-
-{{category.name}}
-<section class="">
-    <div class="container px-4 px-lg-5">
-      <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-        {% for product in products %}           
-        <div class="col mb-5">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{product.image.url}}" alt="">
-              <!-- Product details-->
-              <div class="card-body p-4">
-                <div class="text-center">
-                    <!-- Product name-->
-                    <h6 class="fw-bolder">{{product.name|truncatewords:10}}</h6>
-                    <!-- Product reviews-->
-                    {% if product.is_sale %}
-                    <div class="d-flex justify-content-center small text-warning mb-2">
-                        <div class="bi-star-fill"></div>
-                            &nbsp;&nbsp;Oferta!&nbsp;&nbsp;
-                            {{product.discount_percentage}}
-                        <div class="bi-star-fill"></div>
-                    </div>
-                    <!-- Product price-->
-                    <strike>${{product.price}}</strike>&nbsp;  <!-- '&nbsp' para tener un espacio extra -->
-                    ${{product.discounted_price}}
-                    {% else %}
-                    ${{product.price}}
-                    {% endif %}
-                </div>
-              </div>
-            <!-- Product actions-->
-            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-              <div class="text-center">
-                <a class="btn btn-outline-dark mt-auto" href="{% url 'product-detail' slug=product.slug %}">See Product</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-</section>
-    
-
+<div class="section-featured mb-5">
+  <h3></h3>
+  <div class="mt-4">
+    {% for product in products %}           
+      {% include 'store/base/card.html' %}
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}

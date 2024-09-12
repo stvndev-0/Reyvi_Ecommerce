@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
+<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
 <h1>Cart Summary</h1>
 
 {% if cart_products %}
@@ -29,7 +29,7 @@
                     <input type="number" value="{{value}}" id="qty-cart-{{product.id}}" min="1">
                         {% endif %}
                     {% endfor %}
-                </td>s
+                </td>
                 <td>
                     <button data-index="{{product.id}}" class="btn update-cart">Update Cart</button>
                 </td>

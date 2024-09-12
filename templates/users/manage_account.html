@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
+<h1>manage account</h1>
+<div class="col-3 my-2">
+    <div class="card">
+        <div class="card-body">
+            <h4>info user</h4>
+            username: {{user.username}} <br>
+            Last name: {{user.last_name}} <br>
+            Email: {{user.email}} <br>
+            <a href="{% url 'user_update' %}" class="btn">Update user</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

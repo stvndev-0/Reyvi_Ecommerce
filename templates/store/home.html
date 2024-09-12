@@ -2,79 +2,65 @@
 {% load static %}
 {% block content %}
 
-<div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static 'images/banner-sillas-min.jpg' %}" class="d-block w-100" alt="...">
-      </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-</div>
-
-<div class="row justify-content-center align-items-center text-center mt-5">
-    {% for category in categories %}
-    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <a class="category-card" href="{% url 'category' category.slug %}">
-            <div class="card" style="overflow: hidden;">
-                <img src="{{ category.image.url }}" class="card-img card-category-img" alt="{{ category.image.name }}">
-                <div class="card-img-overlay align-content-center">
-                    <h5 class="card-title">{{ category.name }}</h5>
-                </div>
-            </div>
-        </a>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="text-center mb-4">
-  <h1 class="text-white">Sales</h1>
-</div>
-<!-- Sales -->
-
-<section class="">
-  <div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-      {% for product in products_sales %}
-      {% if product.is_sale %}                
-      <div class="col mb-5">
-        <div class="card h-100">
-          <img class="card-img-top" src="{{product.image.url}}" alt="">
-            <!-- Product details-->
-            <div class="card-body p-4">
-              <div class="text-center">
-                <!-- Product name-->
-                <h6 class="fw-bolder">{{product.name|truncatewords:10}}</h6>
-                <!-- Product reviews-->
-                <div class="d-flex justify-content-center small text-warning mb-2">
-                  <div class="bi-star-fill"></div>
-                      &nbsp;&nbsp;Oferta!&nbsp;&nbsp;
-                      {{product.discount_percentage}}
-                    <div class="bi-star-fill"></div>
-                </div>
-                <!-- Product price-->
-                <strike>${{product.price}}</strike>&nbsp;  <!-- '&nbsp' para tener un espacio extra -->
-                ${{product.discounted_price}}
-              </div>
-            </div>
-          <!-- Product actions-->
-          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center">
-              <a class="btn mt-auto" href="{% url 'product-detail' slug=product.slug %}">See Product</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
+<div class="section-home text-center">
+  <h1>Welcome to R Store</h1>
+  <p class="text-muted">Discover the latest in gaming technology</p>
+  <div class="d-flex justify-content-center">
+    <div class="position-relative w-100" style="max-width: 500px;">
+      <!-- Icono de búsqueda -->
+      <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left: 20px;"></i>
+      
+      <!-- Input de búsqueda -->
+      <input type="text" class="ps-5 py-2 rounded-pill search" placeholder="Search for products...">
     </div>
   </div>
-</section>
+</div>
+
+<!-- Shop by Category -->
+<div class="section-category my-5">
+  <h3>Shop by Category</h3>
+  <div class="d-flex flex-wrap gap-4 text-center mt-4">
+    {% for category in categories %}
+      <a href="{% url 'category' slug=category.slug %}" class="position-relative group overflow-hidden rounded-3">
+        <img src="{{category.image.url}}" alt="{{category.name}}">
+        <div class="card-img-overlay position-absolute align-content-center">
+          <span class="text-white fw-medium">{{category.name}}</span>
+        </div>
+      </a>
+    
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Offers -->
+<div class="section-offers my-5">
+  <h3>Hot Deals</h3>
+  <div class="d-flex flex-wrap gap-4 mt-4">
+    {% for product in offers %}
+    
+      {% include 'store/base/card.html' %}
+
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Featured Product -->
+<div class="section-featured mb-5">
+  <h3>Featured Product</h3>
+  <div class="mt-4">
+    {% for product in featured_products %}
+    
+      {% include 'store/base/card.html' %}
+    
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Section join community -->
+<div class="section-community py-5 rounded-2 text-center">
+  <h2 class="text-white mb-3">Join Our Community</h2>
+  <p class="text-white mb-4">Get exclusive deals and stay updated with the latest gaming tech</p>
+  <a href="{% url 'register' %}" class="btn btn-light fw-medium px-4 py-2">Sign Up Now</a>
+</div>
 
 {% endblock %}
