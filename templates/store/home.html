@@ -6,13 +6,13 @@
   <h1>Welcome to Reyvi</h1>
   <p class="text-muted">Discover the latest in gaming technology</p>
   <div class="d-flex justify-content-center">
-    <div class="position-relative w-100" style="max-width: 500px;">
+    <form class="position-relative w-100" role="search" action="{% url 'search' %}" method="post" style="max-width: 500px;">
+      {% csrf_token %}
       <!-- Icono de búsqueda -->
       <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left: 20px;"></i>
-      
       <!-- Input de búsqueda -->
-      <input type="text" class="ps-5 py-2 rounded-pill search" placeholder="Search for products...">
-    </div>
+      <input type="search" class="ps-5 pe-3 py-2 rounded-pill search" name="searched" placeholder="Search for products...">
+    </form>
   </div>
 </div>
 
@@ -60,7 +60,7 @@
 <div class="section-community py-5 rounded-2 text-center">
   <h2 class="text-white mb-3">Join Our Community</h2>
   <p class="text-white mb-4">Get exclusive deals and stay updated with the latest gaming tech</p>
-  <a href="{% url 'register' %}" class="btn btn-light fw-medium px-4 py-2">Sign Up Now</a>
+  <a href="{% url 'signup' %}" class="btn btn-light fw-medium px-4 py-2">Sign Up Now</a>
 </div>
 
 {% endblock %}

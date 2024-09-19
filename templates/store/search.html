@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="section-search">
+    <h2>Search Results for "{{ searched }}"</h2>
+    
+    {% if search %}
+    {% for product in search %}
+    <div class="d-flex flex-wrap gap-4 mt-4">
+        {% include 'store/base/card.html' %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <h3>Product no exist</h3>
+    {% endif %}
+</div>
+    
+
+{% endblock %}

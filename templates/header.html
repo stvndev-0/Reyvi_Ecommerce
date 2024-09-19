@@ -27,16 +27,16 @@
                 {% endfor %}
                 </ul>
             </li>
-            <li><a href="#" class="nav-link ms-2">Pricing</a></li>
-            <li><a href="#" class="nav-link ms-2">FAQs</a></li>
+            <!-- <li><a href="#" class="nav-link ms-2">Pricing</a></li>
+            <li><a href="#" class="nav-link ms-2">FAQs</a></li> -->
             <li><a href="{% url 'about' %}" class="nav-link ms-2">About</a></li>
         </ul>
-
+        
         <div class="col-2">
             <div class="d-flex align-items-center">
                 <a href="{% url 'cart_summary' %}" class="position-relative">
                     <i class="bi bi-cart fs-5" style="color: white;"></i>
-                    <span class="rounded-circle bg-danger text-center text-white position-absolute top-0 translate-middle-x" id="cart_quantity">{{ cart|length }}</span>
+                    <span class="cart_quantity rounded-circle bg-danger text-center text-white position-absolute top-0 translate-middle-x" id="cart_quantity">{{ cart|length }}</span>
                 </a>
                 {% if user.is_authenticated %}
                 <div class="btn-group ms-3">
@@ -56,8 +56,8 @@
                     </ul>
                 </div>
                 {% else %}
-                <a class="btn btn-light ms-4" href="{% url 'login' %}">Login</a>
-                <a class="btn btn-light ms-3" href="{% url 'register' %}">Register</a>
+                <a class="btn btn-light ms-4" href="{% url 'login' %}">Log In</a>
+                <a class="btn btn-light ms-3" href="{% url 'signup' %}">Sign Up</a>
                 {% endif %}
             </div>
         </div>

@@ -3,7 +3,7 @@
 <button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
 
 <h1>My Address</h1><a href="{% url 'address_create' %}">Adding new Shipping Address</a>
-{% for shipping in user.profile.address.all %}
+{% for shipping in user.profile.shipping_address.all %}
 <div class="col-4 my-2">
     <div class="card">
         <div class="p-2">

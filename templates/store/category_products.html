@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="section-featured mb-5">
-  <h3></h3>
+  <h2>Category {{category_slug|title}}</h2>
   <div class="mt-4">
-    {% for product in products %}           
+    {% for product in products %}
       {% include 'store/base/card.html' %}
     {% endfor %}
   </div>
