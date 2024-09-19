@@ -1,23 +1,25 @@
 import json
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.forms import LoginForm, SignUpForm, UpdateUserForm, ShippingAddressForm
+from users.forms import LoginForm, SignUpForm, UpdateUserForm
+from payment.forms import ShippingAddressForm
 from django.contrib.auth.models import User
 from django.views.generic import ListView, UpdateView, View
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import Profile, ShippingAddress
+from .models import Profile
+from payment.models import ShippingAddress
 from cart.cart import Cart
 from store.models import Product
 
-class LoginView(FormView):
+class LogInView(FormView):
     template_name = 'users/login.html'
     form_class = LoginForm
 
     def get_success_url(self):
-        return reverse_lazy('my_account')
+        return reverse_lazy('home')
 
     def form_valid(self, form):
         # Autenticación del usuario
@@ -48,10 +50,10 @@ class LoginView(FormView):
 
 # Hacer que se el usuario acceda a su uenta una vez registrado, falta enviar un correo electronico
 # el cual le avise al usuario que se a registrado correctamente.
-class RegisterView(CreateView):
+class SignUpView(CreateView):
     model = User
     form_class = SignUpForm
-    template_name = 'users/register.html'
+    template_name = 'users/signup.html'
 
     def get_success_url(self):
         return reverse_lazy('my_account')

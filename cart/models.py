@@ -1,17 +1,16 @@
 from django.db import models
-from datetime import datetime
-from store.models import Product
 from users.models import Profile
 
 # Create your models here.
 class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    client = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-    address = models.CharField(max_length=100, blank=True)
-    phone = models.CharField(max_length=20, blank=True)
-    date = models.DateField(default=datetime.today)
-    status = models.BooleanField(default=False)
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
+    full_name = models.CharField(max_length=150)
+    email = models.EmailField(max_length=255)
+    shipping_address = models.TextField(max_length=1500)
+    amount_paid = models.DecimalField(decimal_places=2, max_digits=10)
+    date_ordered = models.DateTimeField(auto_now_add=True)
+    shipped = models.BooleanField(default=False)
+    date_shipped = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return self.product.name
+        return f'Order - N°{self.pk} By {self.full_name}'
