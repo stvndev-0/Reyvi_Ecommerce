@@ -1,6 +1,7 @@
-import json
 from users.models import Profile
 from store.models import Product
+import json
+from decimal import Decimal
 
 class Cart:
     def __init__(self, request):
@@ -67,27 +68,51 @@ class Cart:
         self.session.modified = True
 
     def delete(self, product):
-        product_id = str(product)
+        product_id = str(product.id)
 
         if product_id in self.cart:
             del self.cart[product_id]
 
         self.session.modified = True
 
-    def total(self):
+    def total(self, id=None):
         product_ids = self.cart.keys()
+        if id is not None:
+            product_ids = [id]
         products = Product.objects.filter(id__in=product_ids)
 
         quantities = self.cart
 
-        total = 0
+        total = Decimal('0.00')
         for key, value in quantities.items():
             key = int(key)
             for product in products:
-                print(product.discounted_price, value)
                 if product.id == key:
                     if product.is_sale:
                         total += product.discounted_price * int(value)
                     else:
                         total += product.price * int(value)
         return total
+    
+    def subTotal_products(self):
+        updated_totals = {}
+        for product_id, qty in self.cart.items():
+            product = Product.objects.get(id=product_id)
+            price = product.discounted_price if product.is_sale else product.price
+            updated_totals[product_id] = price * Decimal(qty)
+        return updated_totals
+    
+    def update_total(self, data):
+        quantities  = data.get('quantities', {})
+
+        updated_totals = {}
+
+        for product_id, product_qty in quantities.items():
+            self.update(product=product_id, quantity=product_qty)
+            product_total = self.total(id=product_id)
+            updated_totals[product_id] = product_total
+
+        # calcula el total del carrito completo
+        new_total = self.total()
+
+        return {'updated_totals': updated_totals, 'new_total': new_total}
