@@ -1,9 +1,11 @@
+import json
 from django.views.generic import TemplateView, View, DeleteView, UpdateView
-from django.urls import reverse_lazy
-from .cart import Cart
-from store.models import Product
 from django.shortcuts import get_object_or_404
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.contrib import messages
+from store.models import Product
+from .cart import Cart
 
 # Create your views here.
 class CartSummaryListView(TemplateView):
@@ -17,63 +19,60 @@ class CartSummaryListView(TemplateView):
         cart = Cart(self.request)
         response['cart_products'] = cart.get_products()
         response['quantities'] = cart.get_quants()
-        response['totals'] = cart.total()
+        response['total'] = cart.total()
+        response['sub_total'] = cart.subTotal_products()
         return response
 
 class CartAddView(View):
 
     def post(self, request):
-        # Asociamos la sesion del usuario al carrito, para 
-        # que los productos guardados persistan
         cart = Cart(request)
 
+        data = json.loads(request.body)
         # Verificamos si la accion que se envio en la 
         # solicitud POST es igual a 'post'
-        if request.POST.get('action') == 'post':
+        if data.get('action') == 'post':
             # Extraemos el 'product_id' de los datos de la solicitud POST
             # hacemos lo mismo pero con el 'product_qty'
-            product_id = request.POST.get('product_id')
-            product_qty = request.POST.get('product_qty')
+            product_id = data.get('product_id')
+            product_qty = data.get('product_qty')
 
             # Busca un producto con un ID especifico en la bdd, si
             # existe nos devolvera un objeto, de lo contrario devuelve un error 404 
             product = get_object_or_404(Product, id=product_id)
-            
-            # Se agrega el producto al carrito de compras utilizando
-            # el metodo 'add' de la clase 'Cart'
             cart.add(product=product, quantity=product_qty)
 
             cart_quantity = cart.__len__()
 
-            # Devolvera un mensaje
-            response = JsonResponse({'qty': cart_quantity})
-            return response
+            response_data = {'qty': cart_quantity, 'messages': [f'{product.name} has been added to your cart.']}
+            return JsonResponse(response_data)
 
 class CartUpdateView(UpdateView):
     
     def post(self, request):
         cart = Cart(request)
+        data = json.loads(request.body)
 
-        if request.POST.get('action') == 'post':
-            product_id = request.POST.get('product_id')
-            product_qty = request.POST.get('product_qty')
-
-            cart.update(product=product_id, quantity=product_qty)
-
-            # Devolvera un mensaje
-            response = JsonResponse({'qty': product_qty})
-            return response
+        if data.get('action') == 'post':
+            updated_data = cart.update_total(data)
+            response_data = {
+                'updated_totals': updated_data['updated_totals'], 
+                'new_cart_total': updated_data['new_total'],
+                'messages': ['Cart updated.']
+            }
+            return JsonResponse(response_data)
 
 class CartDeleteView(DeleteView):
     
     def post(self, request):
         cart = Cart(request)
+        data = json.loads(request.body)
+        print(data)
+        if data.get('action') == 'post':
+            product_id = data.get('product_id')
+            product = get_object_or_404(Product, id=product_id)
+            print(cart.delete(product=product))
 
-        if request.POST.get('action') == 'post':
-            product_id = request.POST.get('product_id')
-
-            cart.delete(product=product_id)
-
-            # Devolvera un mensaje
-            response = JsonResponse({'product_id': product_id})
-            return response
+            response_data = {'product_id': product_id, 'messages': [f'"{product.name}" removed.']}
+            return JsonResponse(response_data)
+            
