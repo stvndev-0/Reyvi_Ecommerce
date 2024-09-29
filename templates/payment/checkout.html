@@ -3,30 +3,47 @@
 
 <div class="row justify-content-center">
     <div class="col-6">
-        
-        <!-- {% if request.user.profile.shipping_address %}
-            
-            {% for shipping in user.profile.shipping_address.all %}
-            <div class="col-4 my-2">
-                <div class="card">
-                    <div class="p-2">
-                        <div>
-                            {{shipping.full_name}}
+        <form method="post">
+            {% csrf_token %}
+            {% if user.is_authenticated %}                
+                {% if shipping_addresses %}
+                    {% for shipping in shipping_addresses %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <h5>Shipping Address</h5>
+                        <!-- <a href="" class="">Change Address</a> -->
+                    </div>
+                    <div class="border border-start-0 p-2 ps-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="mb-0 d-flex align-items-center">
+                                    <h6 class="fw-bold mb-0">{{shipping.full_name}}</h6>
+                                    <p class="ms-2 mb-0">{{shipping.phone}}</p>
+                                </div>
+                                <p class="mb-0">{{shipping.address}}</p>
+                                <p class="mb-1">{{shipping.city}} {{shipping.state}} {{shipping.country}} {{shipping.zipcode}}</p>
+                            </div>
+                            <a href="{% url 'address_update' shipping.id %}">Edit Addres</a>
                         </div>
-                        <a href="{% url 'address_update' shipping.id %}">Edit Addres</a>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
                 
-        {% endif %} -->
-        <div class="">
-            <form action="" method="post">
-                {% csrf_token %}
-                {{shipping_form.as_p}}
-                <button type="submit" class="btn-color-primary py-2 px-4 fw-medium rounded-2 d-inline-flex justify-content-center align-items-center">Continue To Billing</button>
-            </form>
-        </div>
+                <div style="display: none;">
+                    <input type="hidden" name="shipping_address" value="{{ shipping.id }}">
+                    {{shipping_form}}
+                </div>
+                
+                    {% endfor %}
+                {% else %}
+                {% include 'users/crud_address/forms/form.html' %}
+                {% endif %}
+            {% else %}
+            <div class="mt-4">
+                {% include 'users/crud_address/forms/form.html' %}
+            </div>
+            {% endif %}
+            <button type="submit" class="btn-color-primary py-2 px-4 fw-medium rounded-2 d-inline-flex justify-content-center align-items-center">Continue To Billing</button>
+        </form>
     </div>
     <div class="col-6">
         <h4>Cart Summary</h4>
@@ -43,11 +60,11 @@
                 </div>
                 {{product.name}}
                 
-                {% if product.is_sale %}
-                ${{product.discounted_price}}
-                {% else %}
-                ${{product.price}}
-                {% endif %}
+                {% for key, value in sub_total.items %}
+                    {% if key == product.id|slugify %}
+                <span id="total-{{ product.id }}">${{ value }}</span>
+                    {% endif %}
+                {% endfor %}
             </div>
             {% endfor %}
         </div>

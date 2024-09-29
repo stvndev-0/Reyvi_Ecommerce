@@ -1,20 +1,26 @@
+from typing import Any, Mapping
 from django import forms
-from .models import ShippingAddress
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
+from payment.models import ShippingAddress
 
 
 class ShippingAddressForm(forms.ModelForm):
-	full_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Full name'}), required=True),
-	email = forms.EmailField(label="", widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}), required=True),
+	full_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Full name'}), required=True)
+	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder': 'Email'}), required=True)
 	phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Phone'}), required=True)
 	address = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Address'}), required=True)
 	city = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'City'}), required=True)
 	state = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'State'}), required=True)
 	zipcode = forms.CharField(label="", widget=forms.NumberInput(attrs={'class':'form-control', 'placeholder':'Zipcode'}), required=True)
 	country = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Country'}), required=True)
+	default = forms.CharField(label="Default Address", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False)
 
 	class Meta:
 		model = ShippingAddress
-		fields = ('city', 'full_name', 'email', 'phone', 'address', 'state', 'country', 'zipcode',)
+		fields = ('full_name', 'email', 'phone', 'address', 'city', 'state', 'zipcode', 'country', 'default',)
+		
 
 class PaymentForm(forms.Form):
 	card_name =  forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Name On Card'}), required=True)

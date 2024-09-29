@@ -1,3 +1,5 @@
+from typing import Iterable
+from django.contrib.auth.models import User
 from django.db import models
 from cart.models import Order
 from store.models import Product
@@ -16,9 +18,19 @@ class ShippingAddress(models.Model):
     state = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     zipcode = models.CharField(max_length=255)
+    default = models.BooleanField(default=False, null=True, blank=True)
     
+    def save(self, *args, **kwargs):
+        if self.default:
+            # Si default es 'True', buscara las direcciones del usuario 
+            # que esten en 'True' y las actualizara a 'False'.
+            ShippingAddress.objects.filter(client=self.client, default=True).update(default=False)
+        # Se guardara la nueva direccion con el default en 'True'.
+        super(ShippingAddress, self).save(*args, **kwargs)
+
     def __str__(self):
         return f'Shipping Address - {self.full_name}'
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)

@@ -1,5 +1,4 @@
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView, FormView, View
 from django.urls import reverse_lazy
 from .forms import ShippingAddressForm, PaymentForm
@@ -16,9 +15,6 @@ class CheckoutView(FormView):
     template_name = 'payment/checkout.html'
     form_class = ShippingAddressForm
 
-    def get_success_url(self):
-        return reverse_lazy('billing_info')
-    
     def get_context_data(self, **kwargs):
         response = super().get_context_data(**kwargs)
         cart = Cart(self.request)
@@ -28,30 +24,46 @@ class CheckoutView(FormView):
         if client.is_authenticated:
             # Usuario autenticado, se cargaran sus direcciones de envio, de lo contrario
             # no se mostrara nada
-            try:
-                shipping_user = ShippingAddress.objects.get(client=client.client_profile)
-                response['shipping_form'] = ShippingAddressForm(instance=shipping_user)
-
-                response['new_shipping_form'] = ShippingAddressForm()
-            except ShippingAddress.DoesNotExist:
-                response['shipping_form'] = ShippingAddressForm()
-        else:
+            
+            shipping_user = ShippingAddress.objects.filter(client=client.client_profile, default=True)
+            
+            if shipping_user.exists():
+                response['shipping_addresses'] = shipping_user
+                response['shipping_form'] = ShippingAddressForm(instance=shipping_user.first())
+            
             response['new_shipping_form'] = ShippingAddressForm()
+        else:
+            response['shipping_form'] = ShippingAddressForm()
         return response
-
+    
     def form_valid(self, form):
         client = self.request.user
-        if client.is_authenticated and self.request.POST.get('save-address') == 'True':
-            shipping_address = form.save(commit=False)
-            shipping_address.client = client.client_profile
-            shipping_address.save()
+        shipping_id = self.request.POST.get('shipping_address')
+        
+        if client.is_authenticated:
+            if not shipping_id:
+                shipping_address = form.save(commit=False)
+                shipping_address.client = client.client_profile
+                shipping_address.save()
+            else:
+                shipping_address = ShippingAddress.objects.get(id=shipping_id)
+                self.request.session['my_shipping'] = {
+                    'full_name': shipping_address.full_name,
+                    'phone': shipping_address.phone,
+                    'address': shipping_address.address,
+                    'city': shipping_address.city,
+                    'state': shipping_address.state,
+                    'country': shipping_address.country,
+                    'zipcode': shipping_address.zipcode,
+                }
         else:
-            form.save()
+            self.request.session['my_shipping'] = form.cleaned_data
 
-        self.request.session['my_shipping'] = form.cleaned_data
         self.request.session['checkout_valid'] = True
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse_lazy('billing_info')
 
 # Comentar estas dos ultimas
 class BillingInfoView(FormView):

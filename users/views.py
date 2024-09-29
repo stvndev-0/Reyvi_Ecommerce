@@ -24,12 +24,12 @@ class LogInView(FormView):
     def form_valid(self, form):
         # Autenticación del usuario
         response = super().form_valid(form)
-        user = form.get_user()
-        login(self.request, user)
+        client = form.get_user()
+        login(self.request, client)
 
         # 
-        current_user = Profile.objects.get(user__id=self.request.user.id)
-        saved_cart = current_user.old_cart
+        current_client = Profile.objects.get(user__id=self.request.user.id)
+        saved_cart = current_client.old_cart
         if saved_cart:
             convert_cart = json.loads(saved_cart)
             cart = Cart(self.request)
@@ -60,19 +60,19 @@ class SignUpView(CreateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        user = form.save()
-        login(self.request, user)
-        self.send_welcome_mail(user)
+        client = form.save()
+        login(self.request, client)
+        # self.send_welcome_mail(client)
         return response
     
-    def send_welcome_mail(self, user):
-        send_mail(
-			'Welcome to Reyvi page', 
-			'Thanks for joining Reyvi!', 
-			settings.EMAIL_HOST_USER, 
-			[user.email],
-			fail_silently=False
-		)
+    # def send_welcome_mail(self, client):
+    #     send_mail(
+	# 		'Welcome to Reyvi page', 
+	# 		'Thanks for joining Reyvi!', 
+	# 		settings.EMAIL_HOST_CLIENT, 
+	# 		[client.email],
+	# 		fail_silently=False
+	# 	)
 
 class AccountListView(LoginRequiredMixin, ListView):
     model = User
@@ -106,7 +106,7 @@ class ShippingAddressCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy('my_account')
     
     def form_valid(self, form):
-        form.instance.user = self.request.user.profile
+        form.instance.client = self.request.user.client_profile
         return super().form_valid(form)
 
 class ShippingAddressUpdateView(LoginRequiredMixin, UpdateView):

@@ -67,7 +67,7 @@ class CartDeleteView(DeleteView):
     def post(self, request):
         cart = Cart(request)
         data = json.loads(request.body)
-        print(data)
+        
         if data.get('action') == 'post':
             product_id = data.get('product_id')
             product = get_object_or_404(Product, id=product_id)

@@ -9,4 +9,4 @@ def create_or_update_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     else:
-        instance.profile.save()
+        instance.client_profile.save()

@@ -37,9 +37,9 @@ class Cart:
 
         # Guardamos el carrito en el perfil del usuario si esta autenticado
         if self.request.user.is_authenticated:
-            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            current_client = Profile.objects.filter(user__id=self.request.user.id)
             carty = json.dumps(self.cart)
-            current_user.update(old_cart=carty)
+            current_client.update(old_cart=carty)
 
     def __len__(self):
         return len(self.cart)

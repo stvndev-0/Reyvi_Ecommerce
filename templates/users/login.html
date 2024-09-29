@@ -7,14 +7,8 @@
         <h2 class="text-center">Log In</h2>
         <form method="post">
             {% csrf_token %}
-            <div class="form-floating my-1">
-                {{ form.username }}
-                <label for="floatingInput">Username</label>
-            </div>
-            <div class="form-floating my-1">
-                {{ form.password }}
-                <label for="floatingPassword">Password</label>
-            </div>
+            <div class="mb-2">{{form.username}}</div>
+            <div class="mb-2">{{form.password}}</div>
             <button class="btn-color-primary py-2 px-4 fw-medium rounded-2 d-inline-flex justify-content-center align-items-center" type="submit">Log In</button>
             
             <p class="d-flex justify-content-between">

@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
-<form method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">Create</button>
-</form>
-
+<button onclick="volver()" class="btn-back"><i class="bi bi-arrow-left-short"></i></button>
+<h1>New Address</h1>
+<div class="d-flex justify-content-center">
+    <form class="col-5" method="post">
+        {% csrf_token %}
+        {% include 'users/crud_address/forms/form.html' %}
+        <button type="submit" class="btn-color-primary">Save</button>
+    </form>
+</div>
 {% endblock %}

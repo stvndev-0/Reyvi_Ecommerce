@@ -3,7 +3,7 @@ from users.models import Profile
 
 # Create your models here.
 class Order(models.Model):
-    client = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='client_order', blank=True, null=True)
     full_name = models.CharField(max_length=150)
     email = models.EmailField(max_length=255)
     shipping_address = models.TextField(max_length=1500)

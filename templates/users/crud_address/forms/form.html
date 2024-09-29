@@ -1,0 +1,29 @@
+<div class="mb-2">
+    {{ form.country }}
+</div>
+<div class="mb-2">
+    {{form.full_name.label}}
+    {{ form.full_name }}
+</div>
+<div class="mb-2">
+    {{ form.email }}
+</div>
+<div class="mb-2">
+    {{ form.phone }}
+</div>
+<div class="mb-2">
+    {{ form.address }}
+</div>
+<div class="input-group mb-2">
+    {{ form.state }}
+    {{ form.city }}
+</div>
+<div class="mb-2">
+    {{ form.zipcode }}
+</div>
+{% if user.is_authenticated %}
+<div class="mb-2 form-check form-switch" role="switch" id="flexSwitchCheckDefault">
+    {{ form.default }}
+    <label class="form-check-label" for="flexSwitchCheckDefault">{{ form.default.label }}</label>
+</div>
+{% endif %}

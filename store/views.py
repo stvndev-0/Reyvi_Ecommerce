@@ -1,7 +1,7 @@
-from typing import Any
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView, View
 from .models import Product, Category
+from django.utils.html import escape
 
 # Create your views here.
 class HomeListView(ListView):

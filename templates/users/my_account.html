@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-<button onclick="volver()"><i class="bi bi-arrow-left-short"></i></button>
 
 
-{{user.first_name}}
-
-<a href="{% url 'manage_account' %}">Manage my account</a>
-<a href="{% url 'address_book' %}">My Address book</a>
-<div class="my-2">
-    <div class="card">
-        <h4>Mis pedidos</h4>
-        <a href="">Ver mas</a>
+<h2 class="mb-4">My Account</h2>
+<div class="d-flex header-account rounded-3 p-1">
+    <a href="{% url 'manage_account' %}" data-state="active">Manage my account</a>
+    <a href="{% url 'address_book' %}">My address book</a>
+    <a href="">My Orders</a>
+</div>
+<div class="border rounded-3 mt-2">
+    <div class="p-4">
+        <h4>Manage my account</h4>
+        <p class="p-account">Update info personal and password</p>
+    </div>
+    <div class="px-4 pb-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum assumenda omnis quae vitae iure officiis blanditiis quidem, vero distinctio delectus ex debitis, tempora qui optio. Incidunt beatae voluptate perspiciatis et.
     </div>
 </div>
+
+
 
 {% endblock %}

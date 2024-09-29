@@ -7,6 +7,7 @@
             <form action="{% url 'process_order' %}" method="post">
                 {% csrf_token %}
                 {{form.as_p}}
+                <!-- pasarle un tru si esta activado -->
                 <button type="submit" class="btn-color-primary py-2 px-4 fw-medium rounded-2 d-inline-flex justify-content-center align-items-center">Pay Now</button>
             </form>
         </div>
