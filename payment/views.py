@@ -26,12 +26,13 @@ class CheckoutView(FormView):
             # no se mostrara nada
             
             shipping_user = ShippingAddress.objects.filter(client=client.client_profile, default=True)
-            
+            # comprobamos si existe
+            # hay que agregar una validacion de que si tiene una direccion guardada se tome como predeterminada o si no pasarle un formulario para que rellene su direcion
             if shipping_user.exists():
                 response['shipping_addresses'] = shipping_user
                 response['shipping_form'] = ShippingAddressForm(instance=shipping_user.first())
-            
-            response['new_shipping_form'] = ShippingAddressForm()
+            else:
+                response['new_shipping_form'] = ShippingAddressForm()
         else:
             response['shipping_form'] = ShippingAddressForm()
         return response
@@ -49,6 +50,7 @@ class CheckoutView(FormView):
                 shipping_address = ShippingAddress.objects.get(id=shipping_id)
                 self.request.session['my_shipping'] = {
                     'full_name': shipping_address.full_name,
+                    'email': shipping_address.email,
                     'phone': shipping_address.phone,
                     'address': shipping_address.address,
                     'city': shipping_address.city,
@@ -59,6 +61,8 @@ class CheckoutView(FormView):
         else:
             self.request.session['my_shipping'] = form.cleaned_data
 
+        
+        print('paso')
         self.request.session['checkout_valid'] = True
         return super().form_valid(form)
 
@@ -79,6 +83,7 @@ class BillingInfoView(FormView):
         response = super().get_context_data(**kwargs)
         # Recuperar los datos del formulario de la sesión
         response['my_shipping'] = self.request.session.get('my_shipping', {})
+        print(response['my_shipping'])
         return response
     
     def form_valid(self, form):
