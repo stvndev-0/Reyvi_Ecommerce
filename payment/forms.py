@@ -8,7 +8,7 @@ from payment.models import ShippingAddress
 
 class ShippingAddressForm(forms.ModelForm):
 	full_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Full name'}), required=True)
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder': 'Email'}), required=True)
+	email = forms.EmailField(label="", widget=forms.EmailInput(attrs={'class':'form-control', 'placeholder': 'Email'}), required=True)
 	phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Phone'}), required=True)
 	address = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Address'}), required=True)
 	city = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'City'}), required=True)
@@ -20,6 +20,7 @@ class ShippingAddressForm(forms.ModelForm):
 	class Meta:
 		model = ShippingAddress
 		fields = ('full_name', 'email', 'phone', 'address', 'city', 'state', 'zipcode', 'country', 'default',)
+
 		
 
 class PaymentForm(forms.Form):
