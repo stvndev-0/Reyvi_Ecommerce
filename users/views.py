@@ -1,10 +1,11 @@
 import json
+from django.shortcuts import redirect, render
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.forms import LoginForm, SignUpForm, UpdateUserForm
 from payment.forms import ShippingAddressForm
 from django.contrib.auth.models import User
-from django.views.generic import ListView, UpdateView, View
+from django.views.generic import DetailView, UpdateView, TemplateView, View
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
@@ -13,6 +14,7 @@ from .models import Profile
 from payment.models import ShippingAddress
 from cart.cart import Cart
 from store.models import Product
+from payment.models import OrderItem
 
 class LogInView(FormView):
     template_name = 'users/login.html'
@@ -22,12 +24,11 @@ class LogInView(FormView):
         return reverse_lazy('home')
 
     def form_valid(self, form):
-        # Autenticación del usuario
         response = super().form_valid(form)
         client = form.get_user()
         login(self.request, client)
 
-        # 
+        # obtiene el carrito
         current_client = Profile.objects.get(user__id=self.request.user.id)
         saved_cart = current_client.old_cart
         if saved_cart:
@@ -45,11 +46,9 @@ class LogInView(FormView):
                 product = product_dict.get(key)
                 if product:
                     cart.add(product=product, quantity=value)
-
         return response
 
-# Hacer que se el usuario acceda a su uenta una vez registrado, falta enviar un correo electronico
-# el cual le avise al usuario que se a registrado correctamente.
+# falta enviar un correo electronico el cual le avise al usuario que se a registrado correctamente.
 class SignUpView(CreateView):
     model = User
     form_class = SignUpForm
@@ -74,13 +73,22 @@ class SignUpView(CreateView):
 	# 		fail_silently=False
 	# 	)
 
-class AccountListView(LoginRequiredMixin, ListView):
+class AccountDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'users/my_account.html'
 
-class ManageAccountView(LoginRequiredMixin, ListView):
+    def get_object(self):
+        return self.request.user
+
+class ManageAccountView(LoginRequiredMixin, TemplateView):
     model = User
+    form_class = UpdateUserForm
     template_name = 'users/manage_account.html'
+
+    def get(self, request, *args, **kwargs):
+        client = User.objects.get(id=request.user.id)
+        form = self.form_class(instance=client)  # Inicializa el formulario
+        return render(request, self.template_name, {'form': form, 'client': client})
 
 class AccountUserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
@@ -93,21 +101,29 @@ class AccountUserUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return User.objects.get(id=self.request.user.id)
 
-class ShippingAddressView(LoginRequiredMixin, ListView):
-    model = ShippingAddress
-    template_name = 'users/address_book.html'
-
-class ShippingAddressCreateView(LoginRequiredMixin, CreateView):
+class ShippingAddressView(LoginRequiredMixin, View):
     model = ShippingAddress
     form_class = ShippingAddressForm
-    template_name = "users/crud_address/shippingAddress_create.html"
+    template_name = 'users/address_book.html'
 
     def get_success_url(self):
         return reverse_lazy('my_account')
+
+    def get(self, request, *args, **kwargs):
+        addresses = ShippingAddress.objects.filter(client=request.user.client_profile)
+        form = self.form_class()  # Inicializa el formulario vacío
+        return render(request, self.template_name, {'form': form, 'addresses': addresses})
     
-    def form_valid(self, form):
-        form.instance.client = self.request.user.client_profile
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            shipping_address = form.save(commit=False)
+            shipping_address.client = request.user.client_profile
+            shipping_address.save()
+            return redirect(self.get_success_url())
+        else:
+            addresses = ShippingAddress.objects.filter(user=request.user)
+            return render(request, self.get_success_url(), {'form': form, 'addresses': addresses})
 
 class ShippingAddressUpdateView(LoginRequiredMixin, UpdateView):
     model = ShippingAddress
@@ -116,3 +132,14 @@ class ShippingAddressUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('my_account')
+    
+    def get_object(self):
+        return ShippingAddress.objects.get(pk=self.kwargs['pk'])
+
+class OrderView(View):
+    model = OrderItem
+    template_name = 'users/my_order.html'
+
+    def get(self, request, *args, **kwargs):
+        orders = OrderItem.objects.filter(client=request.user.client_profile)
+        return render(request, self.template_name, {'orders': orders})
