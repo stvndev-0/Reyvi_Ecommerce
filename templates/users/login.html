@@ -7,8 +7,23 @@
         <h2 class="text-center">Log In</h2>
         <form method="post">
             {% csrf_token %}
-            <div class="mb-2">{{form.username}}</div>
-            <div class="mb-2">{{form.password}}</div>
+            
+            <div class="mb-2">
+                {{form.username}}
+                {% if form.username.errors %}
+                <div class="text-danger">
+                    {{ form.username.errors }}
+                </div>
+            {% endif %}
+            </div>
+            <div class="mb-2">
+                {{form.password}}
+                {% if form.password.errors %}
+                <div class="text-danger">
+                    {{ form.password.errors }}
+                </div>
+                {% endif %}
+            </div>
             <button class="btn-color-primary py-2 px-4 fw-medium rounded-2 d-inline-flex justify-content-center align-items-center" type="submit">Log In</button>
             
             <p class="d-flex justify-content-between">
@@ -19,5 +34,4 @@
         </form>
     </div>
 </div>
-
 {% endblock %}
