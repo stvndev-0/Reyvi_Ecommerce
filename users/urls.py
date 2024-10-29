@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AccountDetailView, ManageAccountView, AccountUserUpdateView, ShippingAddressView,ShippingAddressUpdateView, OrderView
+from .views import AccountDetailView, ManageAccountView, AccountUserUpdateView, ShippingAddressView,ShippingAddressUpdateView, OrderView, LogInView, SignUpView
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
@@ -10,5 +10,7 @@ urlpatterns = [
     path('address_book/new_address/', ShippingAddressView.as_view(), name='new_address'),
     path('address_book/update_address/<int:pk>/', ShippingAddressUpdateView.as_view(), name='update_address'),
     path('order/', OrderView.as_view(), name='my_order'),
+    path('login/', LogInView.as_view(), name='login'),
+    path('signup/', SignUpView.as_view(), name='signup'),
     path('logout/', LogoutView.as_view(), name='logout'),
 ]
