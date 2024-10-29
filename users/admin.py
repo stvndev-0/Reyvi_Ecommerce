@@ -13,6 +13,9 @@ class ProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (ProfileInline,)
+    list_display = ('last_login', 'email', 'username', 'is_staff', 'is_active',)
+    search_fields = ('email', 'username', 'is_staff', 'is_active',)
+    ordering = ('username',)
 
 # Desregistrar el UserAdmin predeterminado
 admin.site.unregister(User)
