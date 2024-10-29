@@ -1,4 +1,3 @@
-from typing import Any
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth.models import User
@@ -6,49 +5,20 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
 class LoginForm(AuthenticationForm):
-	def __init__(self, *args, **kwargs):
-		super(LoginForm, self).__init__(*args, **kwargs)
-		self.fields['username'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Username'
-        })
-		self.fields['password'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Password'
-        })
+	username = forms.EmailField(label="Email", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+	password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
 
-	def clean_username(self):
-		user = self.cleaned_data.get('username')
-		if not User.objects.filter(username=user).exists():
-			raise ValidationError('The user does not exist.')
-		return user
-	
-	def clean_password(self):
-		username = self.cleaned_data.get('username')
-		password = self.cleaned_data.get('password')
-		if username:
-			user = User.objects.filter(username=username).first()
-			if user:
-				# Intentar autenticar al usuario
-				user = authenticate(username=username, password=password)
-				if user is None:
-					raise ValidationError('The password is incorrect.')
-		return password
 
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", required=True, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder': 'Email'}))
+	terms_agreement = forms.BooleanField(required=True, error_messages={'required': 'You must agree to the terms to register.'})
 
 	class Meta:
 		model = User
-		fields = ('username', 'email', 'password1', 'password2')
+		fields = ('email', 'password1', 'password2')
 
 	def __init__(self, *args, **kwargs):
 		super(SignUpForm, self).__init__(*args, **kwargs)
-
-		self.fields['username'].widget.attrs['class'] = 'form-control'
-		self.fields['username'].widget.attrs['placeholder'] = 'Username'
-		self.fields['username'].label = ''
-		self.fields['username'].help_text = '<span class="form-text text-muted-white"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
 
 		self.fields['password1'].widget.attrs['class'] = 'form-control'
 		self.fields['password1'].widget.attrs['placeholder'] = 'Password'
@@ -65,12 +35,16 @@ class SignUpForm(UserCreationForm):
 		
 		if not email.endswith('@gmail.com'):
 			raise ValidationError('Only Gmail emails are allowed.')
-		else:
-			client_email = User.objects.filter(email=email)
-			if client_email.exists():
-				raise ValidationError('The email is already registered, please enter another one.')
-			return email
+		
+		if User.objects.filter(email=email).exists():
+			raise ValidationError('The email is already registered, please enter another one.')
+		
+		return email
 	
+	def clean_password2(self):
+		# Incluir mas validaciones
+		pass
+
 class UpdateUserForm(UserChangeForm):
 	# Ocultar el campo password
 	password = None
