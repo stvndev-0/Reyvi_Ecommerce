@@ -25,7 +25,7 @@ body{
 }
 
 /* Header */
-nav{
+header{
     background-color: var(--main-color);
     color: var(--second-color);
 }
@@ -166,9 +166,10 @@ nav{
     background-color: var(--third-color);
     width: 100%;
     height: 2.25rem;
+    list-style: none;
 }
 
-.header-account a{
+.header-account button{
     width: 100%;
     display: flex;
     align-items: center;
@@ -179,10 +180,9 @@ nav{
     padding: .25rem .75rem .25rem .75rem;
 }
 
-.p-account{
-    color: var(--third-color);
+.li-link{
+    border: 0;
 }
-
 
 .footer{
     background-color: rgb(243, 244, 246);
