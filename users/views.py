@@ -1,15 +1,15 @@
 import json
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.core.exceptions import PermissionDenied
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.forms import LoginForm, SignUpForm, UpdateUserForm
 from payment.forms import ShippingAddressForm
 from django.contrib.auth.models import User
-from django.views.generic import DetailView, UpdateView, TemplateView, View
+from django.views.generic import View, DetailView, UpdateView, TemplateView, DeleteView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
-from django.core.mail import send_mail
-from django.conf import settings
+from .tasks import send_welcome_mail
 from .models import Profile
 from payment.models import ShippingAddress
 from cart.cart import Cart
@@ -19,12 +19,9 @@ from payment.models import OrderItem
 class LogInView(FormView):
     template_name = 'users/login.html'
     form_class = LoginForm
-
-    def get_success_url(self):
-        return reverse_lazy('home')
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         client = form.get_user()
         login(self.request, client)
 
@@ -46,47 +43,31 @@ class LogInView(FormView):
                 product = product_dict.get(key)
                 if product:
                     cart.add(product=product, quantity=value)
-        return response
+        return super().form_valid(form)
 
-# falta enviar un correo electronico el cual le avise al usuario que se a registrado correctamente.
 class SignUpView(CreateView):
     model = User
     form_class = SignUpForm
     template_name = 'users/signup.html'
-
-    def get_success_url(self):
-        return reverse_lazy('my_account')
+    success_url = reverse_lazy('my_account')
     
     def form_valid(self, form):
-        response = super().form_valid(form)
         client = form.save()
         login(self.request, client)
-        # self.send_welcome_mail(client)
-        return response
-    
-    # def send_welcome_mail(self, client):
-    #     send_mail(
-	# 		'Welcome to Reyvi page', 
-	# 		'Thanks for joining Reyvi!', 
-	# 		settings.EMAIL_HOST_CLIENT, 
-	# 		[client.email],
-	# 		fail_silently=False
-	# 	)
+        # send_welcome_mail(client)
+        return super().form_valid(form)
 
-class AccountDetailView(LoginRequiredMixin, DetailView):
+class AccountDetailView(LoginRequiredMixin, TemplateView):
     model = User
     template_name = 'users/my_account.html'
 
-    def get_object(self):
-        return self.request.user
-
-class ManageAccountView(LoginRequiredMixin, TemplateView):
+class ManageAccountView(LoginRequiredMixin, DetailView):
     model = User
     form_class = UpdateUserForm
     template_name = 'users/manage_account.html'
 
     def get(self, request, *args, **kwargs):
-        client = User.objects.get(id=request.user.id)
+        client = request.user
         form = self.form_class(instance=client)  # Inicializa el formulario
         return render(request, self.template_name, {'form': form, 'client': client})
 
@@ -94,49 +75,56 @@ class AccountUserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UpdateUserForm
     template_name = 'users/crud_account/account_update.html'
+    success_url = reverse_lazy('manage_account')
 
-    def get_success_url(self):
-        return reverse_lazy('my_account')
-    
     def get_object(self):
-        return User.objects.get(id=self.request.user.id)
+        return self.request.user
 
-class ShippingAddressView(LoginRequiredMixin, View):
+class ShippingAddressView(LoginRequiredMixin, DetailView):
     model = ShippingAddress
-    form_class = ShippingAddressForm
     template_name = 'users/address_book.html'
-
-    def get_success_url(self):
-        return reverse_lazy('my_account')
 
     def get(self, request, *args, **kwargs):
         addresses = ShippingAddress.objects.filter(client=request.user.client_profile)
-        form = self.form_class()  # Inicializa el formulario vacío
-        return render(request, self.template_name, {'form': form, 'addresses': addresses})
-    
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            shipping_address = form.save(commit=False)
-            shipping_address.client = request.user.client_profile
-            shipping_address.save()
-            return redirect(self.get_success_url())
-        else:
-            addresses = ShippingAddress.objects.filter(user=request.user)
-            return render(request, self.get_success_url(), {'form': form, 'addresses': addresses})
+        return render(request, self.template_name, {'addresses': addresses})
+
+class ShippingAddressCreateView(LoginRequiredMixin, CreateView):
+    form_class = ShippingAddressForm
+    template_name = 'users/crud_address/address_form.html'
+    success_url = reverse_lazy('address_book')
+
+    def form_valid(self, form):
+        shipping_address = form.save(commit=False)
+        shipping_address.client = self.request.user.client_profile
+        shipping_address.save()
+        return super().form_valid(form)
 
 class ShippingAddressUpdateView(LoginRequiredMixin, UpdateView):
     model = ShippingAddress
     form_class = ShippingAddressForm
-    template_name = "users/crud_address/shippingAddress_update.html"
+    template_name = "users/crud_address/address_form.html"
+    success_url = reverse_lazy('address_book')
 
-    def get_success_url(self):
-        return reverse_lazy('my_account')
-    
-    def get_object(self):
-        return ShippingAddress.objects.get(pk=self.kwargs['pk'])
+    def get(self, request, *args, **kwargs):
+        addresses = get_object_or_404(ShippingAddress, pk=self.kwargs['pk'])
+        if request.user != addresses.client:
+            return PermissionDenied
+        form = self.form_class(instance=addresses)
+        return render(request, self.template_name, {'form': form})
 
-class OrderView(View):
+class ShippingAddressDeleteView(LoginRequiredMixin, DeleteView):
+    model = ShippingAddress
+    success_url = reverse_lazy('address_book')
+
+    def post(self, request, *args, **kwargs):
+        addresses = get_object_or_404(ShippingAddress, pk=self.kwargs['pk'])
+        if request.user != addresses.client:
+            return PermissionDenied
+        addresses.delete()
+        return redirect(self.success_url)
+
+# Generar un token para el pedido
+class OrderView(DetailView):
     model = OrderItem
     template_name = 'users/my_order.html'
 
